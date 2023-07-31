@@ -113,9 +113,9 @@ class Handler(BaseHTTPRequestHandler):
                     vol = 0
                 client.setvol(vol)
             elif action[1] == 'getplaylist':
-                self.wfile.write(json.dumps(client.playlistinfo()))
+                self.wfile.write(json.dumps(client.playlistinfo()).encode('utf-8'))
             elif action[1] == 'getalltracks':
-                self.wfile.write(json.dumps(client.listallinfo()))
+                self.wfile.write(json.dumps(client.listallinfo()).encode('utf-8'))
             elif action[1] == 'changetrack':
                 client.playid(action[2])
             elif action[1] == 'seekpercent':
@@ -139,7 +139,10 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write("403 Forbidden: %s\nThis incident has been logged." % filepath)
             print("403 -- %s:%s tried to access %s, but the request was blocked since the target file was not located in the www folder." % (self.client_address[0], self.client_address[1], filepath))
         else:
-            fh = open(filepath, "r")
+            if os.path.abspath(filepath).endswith(".png") or os.path.abspath(filepath).endswith(".ico"):
+                fh = open(filepath, "r", encoding='unicode_escape')
+            else:
+                fh = open(filepath, "r")
             self.send_response(200)
             self.send_header("Content-type", mimetypes.guess_type(filepath)[0])
             self.end_headers()
