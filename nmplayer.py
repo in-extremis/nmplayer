@@ -142,13 +142,16 @@ class Handler(BaseHTTPRequestHandler):
             print("403 -- %s:%s tried to access %s, but the request was blocked since the target file was not located in the www folder." % (self.client_address[0], self.client_address[1], filepath))
         else:
             if os.path.abspath(filepath).endswith(".png") or os.path.abspath(filepath).endswith(".ico"):
-                fh = open(filepath, "r", encoding='unicode_escape')
+                fh = open(filepath, "rb")
             else:
                 fh = open(filepath, "r")
             self.send_response(200)
             self.send_header("Content-type", mimetypes.guess_type(filepath)[0])
             self.end_headers()
-            self.wfile.write(fh.read().encode())
+            if os.path.abspath(filepath).endswith(".png") or os.path.abspath(filepath).endswith(".ico"):
+                self.wfile.write(fh.read())
+            else:
+                self.wfile.write(fh.read().encode())
 
 server = HTTPServer(('', 8080), Handler)
 server.timeout = 0  # Make handle_request() not blocking
