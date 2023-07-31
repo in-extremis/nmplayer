@@ -9,8 +9,8 @@ Setup
 
 Right now, NMplayer only sends commands like play and status etc. Playlist management should be done manually or with another client for now.
 
-1. Install python and mpd if you do not already have those.
-2. Install python-mpd
+1. Install python3.10+ and mpd if you do not already have those.
+2. Install python-mpd2
 3. Set up mpd to the point that it should be able to start playing.
 4. Get the Raspberry Pi's IP (eg. `ifconfig`)
 5. Run `python nmplayer.py`
@@ -20,11 +20,11 @@ Right now, NMplayer only sends commands like play and status etc. Playlist manag
 ###List of commands
 Running these commands from a fresh Raspbian 'wheezy' installation should work.
 
-    wget https://github.com/Darkwater124/nmplayer/archive/master.zip
+    wget https://github.com/in-extremis/nmplayer/archive/master.zip
     unzip master.zip
     cd nmplayer-master/
     sudo apt-get install mpd
-    sudo apt-get install python-mpd
+    sudo apt-get install python-mpd2
       Put music files in /var/lib/mpd/music
     python
     >>> import mpd
