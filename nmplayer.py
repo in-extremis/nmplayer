@@ -6,6 +6,8 @@ import os          , sys    ,\
 from os.path import *
 from http.server import *
 
+pathprefix="/var/www/mpd"
+
 def scaleclamp(n, x1, y1, x2, y2):
     n  = float(n)
     x1 = float(x1)
@@ -56,7 +58,7 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         print("GET request from %s:%s to %s" % (self.client_address[0], self.client_address[1], self.path))
 
-        filepath = os.getcwd() + "/www" + self.path
+        filepath = pathprefix + "/www" + self.path
 
         if self.path[:4] == "/do/":
             action = list(filter(None, self.path.split("/")))
@@ -132,7 +134,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-type", "text/plain")
             self.end_headers()
             self.wfile.write("404 File Not Found: %s" % filepath)
-        elif not os.path.abspath(filepath).startswith(os.getcwd() + "/www/"):
+        elif not os.path.abspath(filepath).startswith(pathprefix + "/www/"):
             self.send_response(403)
             self.send_header("Content-type", "text/plain")
             self.end_headers()
