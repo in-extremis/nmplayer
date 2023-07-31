@@ -1,27 +1,10 @@
 import os          , sys    ,\
        subprocess  , select ,\
        time        , math   ,\
-       pygame      , json   ,\
+       json        ,         \
        mimetypes   , mpd
 from os.path import *
-from pygame.locals import *
-from pygame.gfxdraw import *
-from pygame.key import *
-from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
-
-
-video = False
-
-if video:
-    pygame.init()
-    screen_width = 1280
-    screen_height = 720
-    screen = pygame.display.set_mode((screen_width, screen_height))
-    pygame.mouse.set_visible(0)
-
-    clock = pygame.time.Clock()
-
-
+from http.server import *
 
 def scaleclamp(n, x1, y1, x2, y2):
     n  = float(n)
@@ -35,8 +18,6 @@ def scaleclamp(n, x1, y1, x2, y2):
     n *= (y2 - x2)
     n += x2
     return int(n)
-
-
 
 #class Artist():
 #    def __init__(self, name):
@@ -71,8 +52,6 @@ def scaleclamp(n, x1, y1, x2, y2):
 #            tracks.append(Track(track, albumid, "tracks/%s/%s/%s" % (artist, album, track)))
 #            #print(("Track id  % 3d:      "%trackid) +track)
 
-
-
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         print("GET request from %s:%s to %s" % (self.client_address[0], self.client_address[1], self.path))
@@ -80,7 +59,7 @@ class Handler(BaseHTTPRequestHandler):
         filepath = os.getcwd() + "/www" + self.path
 
         if self.path[:4] == "/do/":
-            action = filter(None, self.path.split("/"))
+            action = list(filter(None, self.path.split("/")))
             self.send_response(200)
             self.send_header("Content-type", "text/plain")
             self.end_headers()
@@ -105,9 +84,9 @@ class Handler(BaseHTTPRequestHandler):
             elif action[1] == 'update':
                 r = client.status()
                 r['songdata'] = client.currentsong()
-                r['nextsongdata'] = client.playlistid(r['nextsongid'])[0]
+                r['nextsongdata'] = "fixme" #client.playlistid(r['nextsongid'])[0]
                 r['volume'] = scaleclamp(r['volume'], 40, 100, 0, 20)
-                self.wfile.write(json.dumps(r))
+                self.wfile.write(json.dumps(r).encode())
             elif action[1] == 'prev':
                 client.previous()
             elif action[1] == 'play' or action[1] == 'pause':
@@ -147,7 +126,7 @@ class Handler(BaseHTTPRequestHandler):
 
         if os.path.isdir(filepath):
             filepath += "/index.html"
-            
+
         if not os.path.exists(filepath):
             self.send_response(404)
             self.send_header("Content-type", "text/plain")
@@ -164,26 +143,20 @@ class Handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", mimetypes.guess_type(filepath)[0])
             self.end_headers()
-            self.wfile.write(fh.read())
+            self.wfile.write(fh.read().encode())
 
 server = HTTPServer(('', 8080), Handler)
-server.timeout = 0 # Make handle_request() not blocking
-print 'Started httpserver on port 8080'
-
+server.timeout = 0  # Make handle_request() not blocking
+print('Started httpserver on port 8080')
 
 client = mpd.MPDClient()           # create client object
 client.timeout = 10                # network timeout in seconds (floats allowed), default: None
 client.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 client.connect("localhost", 6600)  # connect to localhost:6600
 
-
 cursong = "-"
 cursongrefreshtimer = 1
-
-
 keepalivetimer = 500
-
-
 
 running = True
 while running:
@@ -197,57 +170,6 @@ while running:
     if keepalivetimer < 0:
         keepalivetimer = 500
         client.status()
-    
-    if video:
-        try:
-            cursongrefreshtimer -= 1
-            if cursongrefreshtimer <= 0:
-                cursongdata = client.currentsong()
-                if 'artist' in cursongdata and 'title' in cursongdata:
-                    cursong = unicode(cursongdata['artist']) + u" - " + unicode(cursongdata['title'])
-                elif 'title' in cursongdata:
-                    cursong = unicode(cursongdata['title'])
-                else:
-                    cursong = unicode(cursongdata['file'])
-                cursongrefreshtimer = 50
-        except UnicodeDecodeError:
-            cursong = "Effin' Japanese Name"
-
-
-        #keys = pygame.key.get_pressed()
-        #
-        #if keys[K_LEFT]:
-        #    a = "2"
-        #
-        #if keys[K_RIGHT]:
-        #    a = "2"
-        #
-        #
-        #
-        background = pygame.Surface(screen.get_size())
-        background = background.convert()
-        background.fill((100, 0, 0))
-        
-        pygame.gfxdraw.box(background, (10, 10, 1260, 700), (0, 0, 0))                                                                                                                                                                              
-        
-        
-        if pygame.font:
-            font = pygame.font.Font(None, 72)
-            text = font.render("Now playing:", 1, (200, 200, 200))
-            font2 = pygame.font.Font(None, 108)
-            text2 = font2.render(cursong, 1, (220, 220, 220))
-            background.blit(text, (20, 20))
-            background.blit(text2, (20, 100))
-        
-    
-        screen.blit(background, (0, 0))
-        pygame.display.flip()
-    
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                running = False
-            elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                running = False
 
 client.close()
 client.disconnect()
