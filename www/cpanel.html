@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mplayer</title>
-    
+    <title>%webpage-title%</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -83,8 +83,8 @@
         <div class="row-fluid">
             <div class="span12 well" style="text-align: center;">
                 <div id="alert" class="alert alert-error">Loading...</div>
-                <h2>Now playing:</h2>
-                <h1 id="nowplaying">LOADING</h1>
+                <h2>%webpage-frontline%</h2>
+                <h1 id="nowplaying">%webpage-default-title%</h1>
                 <div class="row-fluid">
                     <div class="span3">
                         <div class="btn-group">
@@ -118,13 +118,13 @@
                 </div>
             </div>
         </div>
-        
+
         <ul class="nav nav-tabs" style="margin-bottom: 0; border-bottom: none; position: relative; top: 2px;">
             <li class="active"><a href="#info" data-toggle="tab">Track information</a></li>
             <li><a href="#curplaylist" data-toggle="tab">Current playlist</a></li>
             <li><a href="#alltracks" data-toggle="tab">All tracks</a></li>
         </ul>
-        
+
         <div class="tab-content" style="margin-top: 0;">
             <div id="info" class="tab-pane active well">
                 <table class="table">
@@ -141,15 +141,15 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <div id="curplaylist" class="tab-pane well well-small" style="padding: 9px 0;">
                 <div style="margin: 1px 9px -7px; position: relative;">
                     <i class="icon-search" style="position: absolute; left: 9px; top: 7px;"></i>
                     <input type="text" class="input input-block-level" placeholder="Search in playlist" id="playlistsearch" style="padding-left: 30px;" />
                 </div>
-                
+
                 <hr class="line" />
-                
+
                 <table class="table table-condensed table-hover">
                     <caption style="padding-left: 9px;">
                         Current playlist - <strong id="playlisttracks">0</strong>
@@ -161,15 +161,15 @@
                     <tbody id="playlist"></tbody>
                 </table>
             </div>
-            
+
             <div id="alltracks" class="tab-pane well well-small" style="padding: 9px 0;">
                 <div style="margin: 1px 9px -7px; position: relative;">
                     <i class="icon-search" style="position: absolute; left: 9px; top: 7px;"></i>
                     <input type="text" class="input input-block-level" placeholder="Search all tracks" id="trackssearch" style="padding-left: 30px;" />
                 </div>
-                
+
                 <hr class="line" />
-                
+
                 <table class="table table-condensed table-hover">
                     <caption style="padding-left: 9px;">
                         All tracks - <strong id="totaltracks">0</strong>
@@ -183,7 +183,7 @@
             </div>
         </div>
     </div>
-    
+
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
