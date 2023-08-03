@@ -21,39 +21,6 @@ def scaleclamp(n, x1, y1, x2, y2):
     n += x2
     return int(n)
 
-#class Artist():
-#    def __init__(self, name):
-#        self.name = name
-#
-#class Album():
-#    def __init__(self, name, artistid):
-#        self.name = name
-#        self.artistid = artistid
-#
-#class Track():
-#    def __init__(self, name, albumid, filepath):
-#        self.name = name
-#        self.albumid = albumid
-#        self.filepath = filepath
-#
-#
-#print("Scanning for tracks...")
-#artists = []
-#albums  = []
-#tracks  = []
-#for artist in os.listdir("tracks/"):
-#    artistid = len(artists)
-#    artists.append(Artist(artist))
-#    #print(("Artist id % 3d:  " %artistid) + artist)
-#    for album in os.listdir("tracks/%s/" % artist):
-#        albumid = len(albums)
-#        albums.append(Album(album, artistid))
-#        #print(("Album id  % 3d:    "%albumid) +album)
-#        for track in os.listdir("tracks/%s/%s/" % (artist, album)):
-#            trackid = len(tracks)
-#            tracks.append(Track(track, albumid, "tracks/%s/%s/%s" % (artist, album, track)))
-#            #print(("Track id  % 3d:      "%trackid) +track)
-
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         print("GET request from %s:%s to %s" % (self.client_address[0], self.client_address[1], self.path))
@@ -86,7 +53,7 @@ class Handler(BaseHTTPRequestHandler):
             elif action[1] == 'update':
                 r = client.status()
                 r['songdata'] = client.currentsong()
-                r['nextsongdata'] = "fixme" #client.playlistid(r['nextsongid'])[0]
+                r['nextsongdata'] = client.playlistid(r['nextsongid'])[0]
                 r['volume'] = scaleclamp(r['volume'], 40, 100, 0, 20)
                 self.wfile.write(json.dumps(r).encode())
             elif action[1] == 'prev':
@@ -124,7 +91,6 @@ class Handler(BaseHTTPRequestHandler):
                 song = client.currentsong()
                 client.seek(song['pos'], int(float(action[2]) / 100 * float(song['time'])))
             return
-
 
         if os.path.isdir(filepath):
             filepath += "/index.html"
